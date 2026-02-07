@@ -1,1 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<title>Login</title>
+
+<style>
+
+body{
+  background:#4e73df;
+  font-family:Arial;
+}
+
+.box{
+  width:350px;
+  background:white;
+  margin:120px auto;
+  padding:25px;
+  border-radius:12px;
+  text-align:center;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+}
+
+button{
+  background:#4e73df;
+  color:white;
+  border:none;
+  padding:10px;
+  width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Login</h2>
+
+<input id="email" placeholder="Email">
+
+<input id="pass" type="password" placeholder="Password">
+
+<label>
+<input type="checkbox" id="remember"> Remember Me
+</label>
+
+<button onclick="login()">Login</button>
+
+<p id="msg"></p>
+
+</div>
+
+
+<script>
+
+function login(){
+
+  let e = email.value;
+  let p = pass.value;
+
+  google.script.run
+    .withSuccessHandler(r=>{
+
+      if(r.status==="SUCCESS"){
+
+        if(remember.checked){
+          localStorage.setItem("token",r.token);
+        }
+
+        location.href="?page=dashboard&token="+r.token;
+
+      }else{
+
+        msg.innerText="Invalid Login";
+
+      }
+    })
+    .checkLogin(e,p);
+}
+
+</script>
+
+</body>
+</html>
