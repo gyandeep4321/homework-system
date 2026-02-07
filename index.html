@@ -1,82 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Homework Management System</title>
+  <title>Digital Homework System</title>
 
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
+    body{
       font-family: Arial, sans-serif;
-      background: #eef2f5;
-      margin: 0;
+      background:#f2f2f2;
+      padding:20px;
     }
 
-    header {
-      background: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 25px;
+    .box{
+      max-width:500px;
+      margin:auto;
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 0 10px #ccc;
     }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 30px;
+    h2{
+      text-align:center;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #aaa;
+    input, textarea, button{
+      width:100%;
+      margin:8px 0;
+      padding:10px;
+      font-size:16px;
     }
 
-    button {
-      background: #3498db;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    button{
+      background:green;
+      color:white;
+      border:none;
+      cursor:pointer;
     }
 
-    button:hover {
-      background: #217dbb;
+    button:hover{
+      background:darkgreen;
+    }
+
+    #msg{
+      text-align:center;
+      font-weight:bold;
+      margin-top:10px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Homework Management System</h1>
-  <p>Digital School Platform</p>
-</header>
+  <div class="box">
 
-<div class="container">
+    <h2>Homework Submission</h2>
 
-  <div class="card">
-    <h2>👨‍🎓 Student Panel</h2>
-    <p>View and submit homework.</p>
-    <button>Login</button>
+    <input type="text" id="name" placeholder="Student Name" required>
+
+    <input type="text" id="class" placeholder="Class" required>
+
+    <input type="text" id="section" placeholder="Section" required>
+
+    <input type="text" id="subject" placeholder="Subject" required>
+
+    <textarea id="homework" placeholder="Homework" required></textarea>
+
+    <button onclick="submitData()">Submit</button>
+
+    <div id="msg"></div>
+
   </div>
 
-  <div class="card">
-    <h2>👩‍🏫 Teacher Panel</h2>
-    <p>Create and check assignments.</p>
-    <button>Login</button>
-  </div>
 
-  <div class="card">
-    <h2>⚙ Admin Panel</h2>
-    <p>Manage system users.</p>
-    <button>Login</button>
-  </div>
+<script>
 
-</div>
+const API_URL = "https://script.google.com/macros/s/AKfycbxUgJ128UkvgkK8gAjr3Wijs5uLF2_SziiR3ShFoWW7EN79-fCoa0_Ap7C6r1detzrdFA/exec";
+
+function submitData(){
+
+  let name = document.getElementById("name").value;
+  let cls = document.getElementById("class").value;
+  let section = document.getElementById("section").value;
+  let subject = document.getElementById("subject").value;
+  let homework = document.getElementById("homework").value;
+
+
+  if(name=="" || cls=="" || section=="" || subject=="" || homework==""){
+    alert("Please fill all fields");
+    return;
+  }
+
+
+  document.getElementById("msg").innerHTML="Submitting...";
+
+
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      name:name,
+      class:cls,
+      section:section,
+      subject:subject,
+      homework:homework
+    })
+  })
+  .then(res=>res.json())
+  .then(data=>{
+
+    if(data.status=="success"){
+
+      document.getElementById("msg").innerHTML="✅ Submitted Successfully";
+
+      document.getElementById("name").value="";
+      document.getElementById("class").value="";
+      document.getElementById("section").value="";
+      document.getElementById("subject").value="";
+      document.getElementById("homework").value="";
+
+    }else{
+
+      document.getElementById("msg").innerHTML="❌ Error: "+data.message;
+
+    }
+
+  })
+  .catch(err=>{
+
+    document.getElementById("msg").innerHTML="❌ Network Error";
+
+  });
+
+}
+
+</script>
 
 </body>
 </html>
