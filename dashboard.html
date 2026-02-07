@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<title>Dashboard</title>
+
+<style>
+
+body{
+  font-family:Arial;
+  background:#f5f7fb;
+}
+
+.top{
+  background:#4e73df;
+  color:white;
+  padding:15px;
+}
+
+.box{
+  background:white;
+  padding:20px;
+  margin:20px;
+  border-radius:10px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+
+button{
+  background:#1cc88a;
+  color:white;
+  border:none;
+  padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="top">
+
+<span id="user"></span>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+
+<div class="box">
+
+<h3>Submit Homework</h3>
+
+<input id="teacher" placeholder="Teacher Name">
+
+<input id="cls" placeholder="Class">
+
+<input id="sub" placeholder="Subject">
+
+<textarea id="hw"></textarea>
+
+<button onclick="save()">Submit</button>
+
+<p id="msg"></p>
+
+</div>
+
+
+<script>
+
+let token="";
+
+
+window.onload=function(){
+
+  token = new URLSearchParams(location.search)
+          .get("token");
+
+  if(!token){
+
+    token = localStorage.getItem("token");
+
+    if(!token){
+      location.href="./";
+      return;
+    }
+  }
+
+  google.script.run
+    .withSuccessHandler(r=>{
+
+      if(r==="EXPIRED"){
+        location.href="./";
+      }
+
+      user.innerText="Logged in as: "+r;
+
+    })
+    .checkSession(token);
+};
+
+
+function save(){
+
+  google.script.run
+    .withSuccessHandler(r=>{
+
+      if(r==="SUCCESS"){
+        msg.innerText="Saved!";
+      }
+
+      if(r==="SESSION_EXPIRED"){
+        location.href="./";
+      }
+
+    })
+    .submitHomeworkSecure({
+
+      teacher:teacher.value,
+      className:cls.value,
+      subject:sub.value,
+      homework:hw.value
+
+    },token);
+}
+
+
+function logout(){
+
+  google.script.run.logout(token);
+
+  localStorage.removeItem("token");
+
+  location.href="./";
+}
+
+</script>
+
+</body>
+</html>
